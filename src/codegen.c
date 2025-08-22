@@ -5,6 +5,7 @@
 #include <str_builder.h>
 
 #include <stdlib.h>
+#include <string.h>
 
 struct context {
     struct str_builder builder;
@@ -40,12 +41,44 @@ static const char *gen_op(struct context *ctx, struct ast *op)
         case '-':
             str_builder_printf(&ctx->builder, "sub %s, %s\n", reg1, reg2);
             break;
-        case '*':
-            str_builder_printf(&ctx->builder, "imul %s, %s\n", reg1, reg2);
+        case '*': {
+            if (strcmp(reg1, "rax") == 0) {
+                str_builder_printf(&ctx->builder, "mul %s\n", reg2);
+            } else {
+                const char *tmp = alloc_register_except("rdx");
+                str_builder_printf(&ctx->builder, "mov %s, rax\n", tmp);
+                str_builder_printf(&ctx->builder, "mov rax, %s\n", reg1);
+                str_builder_printf(&ctx->builder, "mul %s\n", reg2);
+                str_builder_printf(&ctx->builder, "mov %s, rax\n", reg1);
+                str_builder_printf(&ctx->builder, "mov rax, %s\n", tmp);
+                free_register(tmp);
+            }
             break;
-        case '/':
-            str_builder_printf(&ctx->builder, "idiv %s, %s\n", reg1, reg2);
+        }
+        case '/': {
+            if (strcmp(reg1, "rax") == 0) {
+                const char *tmp = alloc_register_except("rdx");
+                str_builder_printf(&ctx->builder, "mov %s, rdx\n", tmp);
+                str_builder_append_cstr(&ctx->builder, "xor rdx, rdx\n");
+                str_builder_printf(&ctx->builder, "div %s\n", reg2);
+                str_builder_printf(&ctx->builder, "mov rdx, %s\n", tmp);
+                free_register(tmp);
+            } else {
+                const char *tmp = alloc_register_except("rdx");
+                const char *tmp2 = alloc_register_except("rdx");
+                str_builder_printf(&ctx->builder, "mov %s, rax\n", tmp);
+                str_builder_printf(&ctx->builder, "mov %s, rdx\n", tmp2);
+                str_builder_append_cstr(&ctx->builder, "xor rdx, rdx\n");
+                str_builder_printf(&ctx->builder, "mov rax, %s\n", reg1);
+                str_builder_printf(&ctx->builder, "div %s\n", reg2);
+                str_builder_printf(&ctx->builder, "mov %s, rax\n", reg1);
+                str_builder_printf(&ctx->builder, "mov rax, %s\n", tmp);
+                str_builder_printf(&ctx->builder, "mov rdx, %s\n", tmp2);
+                free_register(tmp);
+                free_register(tmp2);
+            }
             break;
+        }
         default:
             abort();
         }
