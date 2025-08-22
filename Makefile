@@ -1,11 +1,11 @@
 # SPDX-License-Identifier: BSD-2-Clause
 .POSIX:
 CC = cc
-CFLAGS = -g
+CFLAGS = -std=c99 -Wall -Wextra -Wpedantic -g -Iinclude
 BIN = smolc
 YFLAGS = -d
 
-OBJS = src/main.o src/parser.o src/lexer.o
+OBJS = src/main.o src/ast.o src/parser.o src/lexer.o
 
 all: $(BIN)
 

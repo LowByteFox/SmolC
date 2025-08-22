@@ -2,14 +2,23 @@
 %{
 #include "y.tab.h"
 %}
+%option yylineno
 
 %%
 
-[0-9]+      { yylval = atoi(yytext); return NUMBER; }
-[ \t\n]+    ;  /* skip whitespace */
-"+"         { return PLUS; }
+ /* Operators */
+"+"         return '+';
+"-"         return '-';
+"*"         return '*';
+"/"         return '/';
 
-.           { return yytext[0]; } /* fallback for unexpected chars */
+ /* Values */
+[0-9]+      { yylval.num = atol(yytext); return INT_TOK;        }
+[ \t\n]     ;
+
+ /* Dead End */
+.           { fprintf(stderr, "???: %s\n", yytext); abort();    }
 
 %%
+
 int yywrap(void) { return 1; }

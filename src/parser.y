@@ -2,23 +2,44 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include <ast.h>
+
+extern int yylineno;
+extern char *yytext;
 
 int yylex(void);
-void yyerror(const char *s) { fprintf(stderr, "Error: %s\n", s); }
-
-int result;  // store the final result
+int yyerror(const char *s);
+static struct ast *root;
 %}
 
-%token NUMBER
-%token PLUS
+%union {
+    struct ast *node;
+    uint64_t num;
+}
+
+%token <num> INT_TOK
+%type <node> program expr
+
+%left '+'
 
 %%
 
-expr: term
-    | expr PLUS term { result = $1 + $3; }
+program:
+    expr                    { root = program_node($1);      }
     ;
 
-term: NUMBER { $$ = $1; }
+expr:
+    INT_TOK                 { $$ = int_node($1);            }
+    | expr '+' expr         { $$ = op_node('+', $1, $3);    }
     ;
 
 %%
+
+struct ast *parse() {
+    yyparse();
+    return root;
+}
+
+int yyerror(const char *s) {
+    return fprintf(stderr, "Error at line (%d): %s: '%s'\n", yylineno, s, yytext);
+}

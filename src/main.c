@@ -1,13 +1,9 @@
 /* SPDX-License-Identifier: BSD-2-Clause */
-#include <stdio.h>
+#include <ast.h>
 
-int yyparse(void);
-extern int result;
-
-int main()
+int main(void)
 {
-    if (yyparse() == 0) {
-        printf("Result: %d\n", result);
-    }
+    struct ast *parsed = parse();
+    debug_node(parsed);
     return 0;
 }
