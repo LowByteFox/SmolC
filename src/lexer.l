@@ -6,6 +6,10 @@
 
 %%
 
+ /* Brackets */
+"("         return '(';
+")"         return ')';
+
  /* Operators */
 "+"         return '+';
 "-"         return '-';

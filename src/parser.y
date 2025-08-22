@@ -20,7 +20,8 @@ static struct ast *root;
 %token <num> INT_TOK
 %type <node> program expr
 
-%left '+'
+%left '+' '-'
+%left '*' '/'
 
 %%
 
@@ -31,6 +32,9 @@ program:
 expr:
     INT_TOK                 { $$ = int_node($1);            }
     | expr '+' expr         { $$ = op_node('+', $1, $3);    }
+    | expr '-' expr         { $$ = op_node('-', $1, $3);    }
+    | expr '*' expr         { $$ = op_node('*', $1, $3);    }
+    | expr '/' expr         { $$ = op_node('/', $1, $3);    }
     ;
 
 %%

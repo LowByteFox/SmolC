@@ -3,7 +3,7 @@
 CC = cc
 CFLAGS = -std=c99 -Wall -Wextra -Wpedantic -g -Iinclude
 BIN = smolc
-YFLAGS = -d
+YFLAGS = -d -Wcounterexamples
 
 OBJS = src/main.o src/ast.o src/parser.o src/lexer.o
 
