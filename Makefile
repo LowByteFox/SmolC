@@ -5,7 +5,8 @@ CFLAGS = -std=c99 -Wall -Wextra -Wpedantic -g -Iinclude
 BIN = smolc
 YFLAGS = -d -Wcounterexamples
 
-OBJS = src/main.o src/ast.o src/parser.o src/lexer.o
+OBJS = src/main.o src/ast.o src/parser.o src/lexer.o src/registers.o \
+	   src/str_builder.o src/codegen.o
 
 all: $(BIN)
 
