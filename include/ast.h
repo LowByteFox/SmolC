@@ -10,6 +10,7 @@ enum smolc_ast_type {
     PROGRAM,
     INT,
     OP,
+    BRACKETS,
 };
 
 struct ast {
@@ -22,6 +23,7 @@ struct ast {
             struct ast *right;
             char op;
         } operation;
+        struct ast *brackets;
     } u;
 };
 
@@ -30,6 +32,7 @@ struct ast *parse(void);
 _(program)(struct ast *node);
 _(int)(uint64_t num);
 _(op)(char op, struct ast *left, struct ast *right);
+_(bracket)(struct ast *node);
 
 _(debug)(struct ast *node);
 

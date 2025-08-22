@@ -47,6 +47,15 @@ __({
     node->u.operation.right = right;
 })
 
+_(bracket)(struct ast *parent)
+__({
+    node->tag = BRACKETS;
+    node->u.brackets = parent;
+})
+
+
+
+
 static void offset_by(int count)
 {
     for (int i = 0; i < count; i++)
@@ -81,7 +90,13 @@ static void _debug_node(struct ast *node, int spacing)
         offset_by(spacing);
         printf("}\n");
         break;
-      break;
+    case BRACKETS:
+        offset_by(spacing);
+        printf(CYAN"Brackets"CLEAR" (\n");
+        _debug_node(node->u.brackets, spacing + 2);
+        offset_by(spacing);
+        printf(")\n");
+        break;
     }
 }
 
