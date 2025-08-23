@@ -15,6 +15,7 @@
 "-"         return '-';
 "*"         return '*';
 "/"         return '/';
+"%"         return '%';
 
  /* Values */
 [0-9]+      { yylval.num = atol(yytext); return INT_TOK;        }

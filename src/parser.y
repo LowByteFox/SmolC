@@ -21,7 +21,7 @@ static struct ast *root;
 %type <node> program expr
 
 %left '+' '-'
-%left '*' '/'
+%left '*' '/' '%'
 
 %%
 
@@ -35,6 +35,7 @@ expr:
     | expr '-' expr         { $$ = op_node('-', $1, $3);    }
     | expr '*' expr         { $$ = op_node('*', $1, $3);    }
     | expr '/' expr         { $$ = op_node('/', $1, $3);    }
+    | expr '%' expr         { $$ = op_node('%', $1, $3);    }
     | '(' expr ')'          { $$ = bracket_node($2);        }
     ;
 
